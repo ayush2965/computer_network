@@ -3,7 +3,7 @@
 #include<math.h>
 
 void accept(int m[20],int m_size){
-    printf("Enter the data bits: ");
+    printf("Enter the bits: ");
     for(int i=0;i<m_size;i++){
         scanf("%d",&m[i]);
     }
@@ -71,20 +71,96 @@ void hamming_code(int m[20],int m_size){
     }
     printf("Code Word is: \n");
     display(code_word,(m_size+r));
+
         
 }
 
+void error_detection(int cw[20],int n){
+    //calculate number of parity bits and their positions again
+    int r=1;
+    int i=1;
+    int r_positions[20];
+    r_positions[0]=1;
+    while((i*2)<n){
+        i*=2;
+        r_positions[r]=i;
+        r++;
+    }
+    printf("%d\n",r);
+    display(cw,n);
+    printf("\n");
+    printf("Redundant bit positions: ");
+    display(r_positions,r);
+
+    // int reversedcw[n];
+    // int j=0;
+    // for(int i=0;i<n;i++){
+
+    // }
+
+    int bits_at_parity[20];
+    
+    for(int i=0;i<r;i++){
+        int no_of_ones=0;
+        int parity_position=r_positions[i];// positions starting from 1 so 1,2,4,8
+        for(int j=parity_position;j<=n;j+=2*parity_position){//start from 1 and traverse parity bits
+            for(int k=0;(k<parity_position) && ((j+k)<=(n));k++){
+                if(cw[j+k-1]==1){
+                    no_of_ones++;
+                }//start from parity position, check if parity position checking bits do not exceed m_size+r and increment count if value of bit is 1
+            }
+        }
+        if(no_of_ones%2==0){
+            bits_at_parity[i]=0;//if even no of ones set parity bit zero
+        }else{
+            bits_at_parity[i]=1;//if odd no of ones set parity bti one
+        }
+    }
+    int bits_at_codeword[r];
+    for(int i=0;i<r;i++){
+        bits_at_codeword[i]=cw[r_positions[i]-1];
+
+    }
+
+    printf("Syndrome values: ");
+    display(bits_at_parity,r);
+    printf("Actual bits in the codeword: ");
+    display(bits_at_codeword,r);
+
+    for(int i=0;i<r;i++){
+        if(bits_at_codeword[i]!=bits_at_parity[i]){
+            printf("Change at bit position: %d ", r_positions[i]);
+        }
+    } 
+    int error_position[20];
+    int decrement=r-1;
+    for(int i=0;i<r;i++){
+        if(decrement==-1){
+            break;
+        }
+        error_position[decrement]=bits_at_parity[i];
+        decrement--;
+    }
+    
 
 
+}
 
 int main(){
-    int data_bits_size;
-    printf("Enter the size of the data bits (m): ");
-    scanf("%d",&data_bits_size);
-    int m[20];
-    accept(m,data_bits_size);
-    display(m,data_bits_size);
-    hamming_code(m,data_bits_size);
+    // int data_bits_size;
+    // printf("Enter the size of the data bits (m): ");
+    // scanf("%d",&data_bits_size);
+    // int m[20];
+    // accept(m,data_bits_size);
+    // display(m,data_bits_size);
+    // hamming_code(m,data_bits_size);
+    int n;
+    printf("Enter code word size: ");
+    scanf("%d",&n);
+    int codeword[20];
+    accept(codeword,n);
+    error_detection(codeword,n);
+
 
                                                                                                                                                     
 }

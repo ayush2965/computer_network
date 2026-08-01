@@ -16,6 +16,15 @@ void display(int m[20],int m_size){
     printf("\n");
 }
 
+void reverse(int input[20],int n,  int reverse[10]){
+    int j=0;
+    for(int i=(n-1);i>-1;i--){
+        reverse[j]=input[i];
+        j++;
+    }
+    display(reverse,n);
+}
+
 void hamming_code(int m[20],int m_size){
     int r=0;
     
